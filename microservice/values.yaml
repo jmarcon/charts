@@ -9,16 +9,16 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-environment: ${KUBECTL_ENVIRONMENT}
+environment: Local
 
 # Into the containers (only in the Deployment).
 config:
   enabled: true
   # Can map already existent ConfigMaps or Secrets
-  # envFrom: []
-  envFrom:
-    - configMapRef:
-        name: otel-configmap
+  envFrom: []
+  # envFrom:
+  #   - configMapRef:
+  #       name: otel-configmap
   # Data will create a configmap with the values to be used
   data: {}
     # Example:
@@ -29,9 +29,10 @@ config:
     # OTEL_SERVICE_NAME: ${BUILD_REPOSITORY_NAME}
 
 secretStore:
-  enabled: true
+  enabled: false
   refreshInterval: 1m
-  name: "${KUBECTL_STORE_REF}"
+  name: ""
+  # name: "${KUBECTL_STORE_REF}"
 
 migrations:
   enabled: false
@@ -101,7 +102,7 @@ readinessProbe:
 autoscaling:
   enabled: false
   minReplicas: 1
-  maxReplicas: 10
+  maxReplicas: 3
   targetCPUUtilizationPercentage: 70
   targetMemoryUtilizationPercentage: 70
 
