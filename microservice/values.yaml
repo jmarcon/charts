@@ -1,0 +1,134 @@
+replicaCount: 1
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+environment: ${KUBECTL_ENVIRONMENT}
+
+# Into the containers (only in the Deployment).
+config:
+  enabled: true
+  # Can map already existent ConfigMaps or Secrets
+  # envFrom: []
+  envFrom:
+    - configMapRef:
+        name: otel-configmap
+  # Data will create a configmap with the values to be used
+  data: {}
+    # Example:
+    # ASPNETCORE_ENVIRONMENT: "Development"
+    # ASPNETCORE_HTTP_PORTS: "${PORT}"
+    # ASPNETCORE_URLS: "http://*:${PORT}"
+    # Swagger__UrlPath: "/shared-businessrules-service"
+    # OTEL_SERVICE_NAME: ${BUILD_REPOSITORY_NAME}
+
+secretStore:
+  enabled: true
+  refreshInterval: 1m
+  name: "${KUBECTL_STORE_REF}"
+
+migrations:
+  enabled: false
+  ttlSecondsAfterFinished: 100
+  restartPolicy: OnFailure
+  image:
+    repository: nginx
+    pullPolicy: IfNotPresent
+    tag: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  # Kubernetes Service Name, it will created as "fullname" if left empty
+  name: ""
+  type: ClusterIP
+  port: 80
+
+# We defined default resource requests and limits for the microservice here.
+# You can adjust these as necessary depending on your microservice requirements.
+# Change it to your needs.
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+livenessProbe:
+  httpGet:
+    path: /health_check
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 50
+
+# https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+readinessProbe:
+  httpGet:
+    path: /health_check
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 50
+
+# https://kubernetes.io/docs/concepts/workloads/autoscaling/
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 70
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+##Exemple:
+# volumes:
+#   - name: foo
+#     secret:
+#       secretName: mysecret
+#       optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+##Exemple:
+# volumeMounts:
+#   - name: foo
+#     mountPath: "/etc/foo"
+#     readOnly: true
+
+sharedDataProtectionVolume:
+  enabled: false
+  name: "shared-data-protection-volume"
+  claimName: "data-protection-pvc"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

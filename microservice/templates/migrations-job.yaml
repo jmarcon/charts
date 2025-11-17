@@ -1,0 +1,34 @@
+{{- if .Values.migrations.enabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    network/solagora: "true"
+    {{- include "microservice.labels" . | nindent 4 }}
+  name: {{ include "microservice.fullname" . }}-migrations-job
+spec:
+  ttlSecondsAfterFinished: {{ .Values.migrations.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        {{- include "microservice.labels" . | nindent 8 }}
+        {{- include "microservice.selectorLabels" . | nindent 8 }}
+    spec:
+      restartPolicy: {{ default "OnFailure" .Values.migrations.restartPolicy }}
+      containers:
+        - name: {{ include "microservice.fullname" . }}-migrations
+          image: "{{ .Values.migrations.image.repository | default .Values.image.repository }}:{{ .Values.migrations.image.tag | default .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ default "IfNotPresent" .Values.migrations.image.pullPolicy }}
+          command:
+            - ./efbundle
+            - --connection
+            - $(AppSettings__DB_CONN)
+          env:
+            - name: AppSettings__DB_CONN
+              valueFrom:
+                secretKeyRef:
+                {{- if .Values.secretStore.enabled }}
+                  name: {{ include "microservice.fullname" . }}-secrets
+                {{- end }}
+                  key: AppSettings__DB_CONN
+{{- end }}
