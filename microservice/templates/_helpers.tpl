@@ -42,7 +42,7 @@ Create the name of the service to use
 {{- end }}
 
 {{/*
-Common labels
+Common labels (includes version-dependent labels - use for Pod templates)
 */}}
 {{- define "microservice.labels" -}}
 service: {{ include "microservice.serviceName" . }}
@@ -52,6 +52,16 @@ helm.sh/chart: {{ include "microservice.chart" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Metadata labels (stable labels without versions - use for resource metadata to avoid SSA conflicts)
+*/}}
+{{- define "microservice.metadataLabels" -}}
+service: {{ include "microservice.serviceName" . }}
+env: {{ .Values.environment }}
+{{ include "microservice.selectorLabels" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 

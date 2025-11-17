@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: {{ include "microservice.fullname" . }}-configmap
   labels:
-    {{- include "microservice.labels" . | nindent 4 }}
+    {{- include "microservice.metadataLabels" . | nindent 4 }}
 data:
   {{- toYaml .Values.config.data | nindent 2 }}
 {{- end }}

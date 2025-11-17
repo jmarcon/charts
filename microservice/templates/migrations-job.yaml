@@ -4,7 +4,7 @@ kind: Job
 metadata:
   labels:
     network/solagora: "true"
-    {{- include "microservice.labels" . | nindent 4 }}
+    {{- include "microservice.metadataLabels" . | nindent 4 }}
   name: {{ include "microservice.fullname" . }}-migrations-job
 spec:
   ttlSecondsAfterFinished: {{ .Values.migrations.ttlSecondsAfterFinished }}
