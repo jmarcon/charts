@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   microservice:
   - apiVersion: v2
+    appVersion: dotnet9
+    created: "2025-11-17T16:58:26.182976372Z"
+    description: Deploys a dotnet microservice application into a Kubernetes cluster.
+    digest: 83d6431dcb9b262d0e7ef562a33cadc9c38643846e910343b5a98271b2a3e4a7
+    name: microservice
+    type: application
+    urls:
+    - https://github.com/jmarcon/charts/releases/download/microservice-0.1.2/microservice-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
     appVersion: dotnet 9.x
     created: "2025-11-17T16:30:39.676160231Z"
     description: Deploys a dotnet microservice application into a Kubernetes cluster.
@@ -21,4 +31,4 @@ entries:
     urls:
     - https://github.com/jmarcon/charts/releases/download/microservice-0.1.0/microservice-0.1.0.tgz
     version: 0.1.0
-generated: "2025-11-17T16:30:39.676178366Z"
+generated: "2025-11-17T16:58:26.182988275Z"
