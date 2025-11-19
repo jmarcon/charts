@@ -56,7 +56,17 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- if or (.Values.config.enabled) (.Values.secretStore.enabled) }}
+          {{- if or .Values.global.k8sPodEnv .Values.global.k8sContainerEnv }}
+          env:
+          {{- range $k, $v := .Values.global.k8sPodEnv }}
+            - name: {{ $k | quote }}
+              valueFrom:
+                fieldRef:
+                  fieldPath: {{ $v | quote }}
+          {{- end }}
+          {{- include "microservice.containerEnvVars" . | nindent 12 }}
+          {{- end }}
+          {{- if or (.Values.config.enabled) (.Values.secretStore.enabled) (.Values.config.envFrom) }}
           envFrom:
           {{- if .Values.secretStore.enabled }}
             - secretRef:
@@ -65,9 +75,9 @@ spec:
           {{- if .Values.config.enabled }}
             - configMapRef:
                 name: {{ include "microservice.fullname" . }}-configmap
+          {{- end }}
           {{- if .Values.config.envFrom -}}
             {{- toYaml .Values.config.envFrom | nindent 12 }}
-          {{- end }}
           {{- end }}
           {{- end }}
           {{- with (include "microservice.volumeMounts" .) }}

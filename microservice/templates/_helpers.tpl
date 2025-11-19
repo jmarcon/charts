@@ -117,4 +117,22 @@ Create a list of VolumeMounts based on .Values.volumes and .Values.sharedDataPro
 {{- if $volumeMounts -}}
 {{- toYaml $volumeMounts -}}
 {{- end -}}
-{{- end}}
+{{- end }}
+
+
+{{/*
+Create a list of global: based on global.k8sContainerEnv
+It will include the .Chart.Name as containerName for resourceFieldRef
+*/}}
+{{- define "microservice.containerEnvVars" -}}
+{{- $containerEnvs := list }}
+{{- if .Values.global.k8sContainerEnv -}}
+{{- range $key, $value := .Values.global.k8sContainerEnv -}}
+{{- $containerEnvs = append $containerEnvs (dict "name" $key "valueFrom" (dict "resourceFieldRef" (dict "containerName" $.Chart.Name "resource" $value))) -}}
+{{- end -}}
+{{- end -}}
+{{- if $containerEnvs -}}
+{{- toYaml $containerEnvs -}}
+{{- end -}}
+{{- end }}
+
