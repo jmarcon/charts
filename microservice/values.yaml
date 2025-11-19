@@ -63,10 +63,10 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+## It will create a ClusterIP Service. Thats the only type available.
 service:
   # Kubernetes Service Name, it will created as "fullname" if left empty
   name: ""
-  type: ClusterIP
   port: 80
 
 # We defined default resource requests and limits for the microservice here.
